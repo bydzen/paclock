@@ -1,0 +1,25 @@
+Toggle pacman sync and upgrade with immutable chattr.
+
+How to Install on Linux Machine
+
+Steps:
+1. Clone this repository:
+   git clone https://github.com/bydzen/paclock.git
+2. Enter the directory:
+   cd packlock/
+3. Copy main file to binary:
+   sudo cp paclock /usr/bin/
+4. Make executable:
+   sudo chmod +x /usr/bin/paclock
+
+Usage:
+paclock [options]
+Options:
+  lock      Toggle chattr +i on /var/lib/pacman/local
+  unlock    Toggle chattr -i on /var/lib/pacman/local
+  status    Check if /var/lib/pacman/local is locked or unlocked
+
+Help:
+paclock
+
+Enjoy.

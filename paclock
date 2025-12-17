@@ -1,0 +1,45 @@
+#!/bin/bash
+
+SYNC_DIR="/var/lib/pacman/sync"
+CACHE_DIR="/var/cache/pacman/pkg"
+
+# Require root
+if [[ $EUID -ne 0 ]]; then
+    echo "Error: this command must be run as root (use sudo)."
+    exit 1
+fi
+
+is_locked() {
+    lsattr -d "$SYNC_DIR" 2>/dev/null | grep -q 'i' &&
+    lsattr -d "$CACHE_DIR" 2>/dev/null | grep -q 'i'
+}
+
+lock() {
+    echo "Locking pacman (disabling sync and upgrades)..."
+    chattr -R +i "$SYNC_DIR" "$CACHE_DIR"
+    echo "Pacman is now locked."
+}
+
+unlock() {
+    echo "Unlocking pacman (enabling sync and upgrades)..."
+    chattr -R -i "$SYNC_DIR" "$CACHE_DIR"
+    echo "Pacman is now unlocked."
+}
+
+status() {
+    if is_locked; then
+        echo "Pacman status: locked."
+    else
+        echo "Pacman status: unlocked."
+    fi
+}
+
+case "$1" in
+    lock)   lock ;;
+    unlock) unlock ;;
+    status|"") status ;;
+    *)
+        echo "Usage: paclock {lock|unlock|status}"
+        exit 1
+        ;;
+esac
